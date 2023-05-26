@@ -25,7 +25,7 @@ def load_instruction(instruct_dir):
 
 
 def main(
-    load_8bit: bool = False,
+    load_8bit: bool = True,
     base_model: str = "",
     # the infer data, if not exists, infer the default instructions in code
     instruct_dir: str = "",
