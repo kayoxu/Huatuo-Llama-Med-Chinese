@@ -52,8 +52,10 @@ def load_model():
         if torch.__version__ >= "2" and sys.platform != "win32":
             model = torch.compile(model)
 
+        print('模型加载成功')
         return '模型加载成功'
     except:
+        print('模型加载失败')
         return '模型加载失败'
 
 
