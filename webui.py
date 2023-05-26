@@ -13,7 +13,8 @@ from utils.prompter import Prompter
 if torch.cuda.is_available():
     device = "cuda"
 
-global prompter, tokenizer, model
+global prompter, tokenizer
+model = None
 
 
 def load_model():
