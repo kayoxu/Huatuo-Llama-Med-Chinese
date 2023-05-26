@@ -16,7 +16,7 @@ if torch.cuda.is_available():
     device = "cuda"
 
 
-def load_model(input):
+def load_model():
     load_8bit = True
     base_model = 'decapoda-research/llama-7b-hf'
     lora_weights = './lora-llama-med'
