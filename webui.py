@@ -23,34 +23,40 @@ def load_model():
     use_lora = True
     prompt_template = 'med_template'
 
+    print('模型加载中')
     global prompter, tokenizer, model
 
-    prompter = Prompter(prompt_template)
-    tokenizer = LlamaTokenizer.from_pretrained(base_model)
-    model = LlamaForCausalLM.from_pretrained(
-        base_model,
-        load_in_8bit=load_8bit,
-        torch_dtype=torch.float16,
-        device_map="auto",
-    )
-    if use_lora:
-        print(f"using lora {lora_weights}")
-        model = PeftModel.from_pretrained(
-            model,
-            lora_weights,
+    try:
+        prompter = Prompter(prompt_template)
+        tokenizer = LlamaTokenizer.from_pretrained(base_model)
+        model = LlamaForCausalLM.from_pretrained(
+            base_model,
+            load_in_8bit=load_8bit,
             torch_dtype=torch.float16,
+            device_map="auto",
         )
-    # unwind broken decapoda-research config
-    model.config.pad_token_id = tokenizer.pad_token_id = 0  # unk
-    model.config.bos_token_id = 1
-    model.config.eos_token_id = 2
-    if not load_8bit:
-        model.half()  # seems to fix bugs for some users.
+        if use_lora:
+            print(f"using lora {lora_weights}")
+            model = PeftModel.from_pretrained(
+                model,
+                lora_weights,
+                torch_dtype=torch.float16,
+            )
+        # unwind broken decapoda-research config
+        model.config.pad_token_id = tokenizer.pad_token_id = 0  # unk
+        model.config.bos_token_id = 1
+        model.config.eos_token_id = 2
+        if not load_8bit:
+            model.half()  # seems to fix bugs for some users.
 
-    model.eval()
+        model.eval()
 
-    if torch.__version__ >= "2" and sys.platform != "win32":
-        model = torch.compile(model)
+        if torch.__version__ >= "2" and sys.platform != "win32":
+            model = torch.compile(model)
+
+        return '模型加载成功'
+    except:
+        return '模型加载失败'
 
 
 def evaluate(
@@ -95,8 +101,7 @@ app = gr.Blocks()
 diagnosis = gr.TextArea()
 
 with app:
-    gr.Button(value="加载模型", fn=load_model)
-
+    gr.Interface(fn=load_model, inputs="button", outputs='text')
     gr.Interface(fn=submint_disease, inputs="text_area", outputs=diagnosis)
 
 app.launch(server_name="127.0.0.1", inbrowser=True, share=True)
