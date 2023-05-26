@@ -99,4 +99,4 @@ with app:
 
     gr.Interface(fn=submint_disease, inputs="text_area", outputs=diagnosis)
 
-app.launch(server_name="127.0.0.1", inbrowser=True, share=False)
+app.launch(server_name="127.0.0.1", inbrowser=True, share=True)
