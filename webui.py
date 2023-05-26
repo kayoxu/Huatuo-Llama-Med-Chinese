@@ -102,7 +102,7 @@ diagnosis = gr.TextArea()
 
 with app:
     btn = gr.Button(value="加载模型")
-    init_status = gr.Label(value='还没有加载模型')
+    init_status = gr.Label(value='模型加载成功' if model != None else '还没有加载模型')
     btn.click(load_model, outputs=init_status)
 
     gr.Interface(fn=submint_disease, inputs="text_area", outputs=diagnosis)
