@@ -13,8 +13,7 @@ from utils.prompter import Prompter
 if torch.cuda.is_available():
     device = "cuda"
 
-global prompter, tokenizer
-model = None
+globals()['modelInit'] = False
 
 
 def load_model():
@@ -23,6 +22,7 @@ def load_model():
     lora_weights = './lora-llama-med'
     use_lora = True
     prompt_template = 'med_template'
+    global prompter, tokenizer, model
 
     print('模型加载中')
 
@@ -53,11 +53,12 @@ def load_model():
 
         if torch.__version__ >= "2" and sys.platform != "win32":
             model = torch.compile(model)
-
         print('模型加载成功')
+        globals()['modelInit'] = True
         return '模型加载成功'
     except:
         print('模型加载失败')
+        globals()['modelInit'] = False
         return '模型加载失败'
 
 
@@ -104,7 +105,7 @@ diagnosis = gr.TextArea()
 
 with app:
     btn = gr.Button(value="加载模型")
-    init_status = gr.Label(value='还没有加载模型' if model is None else '模型加载成功')
+    init_status = gr.Label(value='还没有加载模型' if False.__eq__(globals()['modelInit']) else '模型加载成功')
     btn.click(load_model, outputs=init_status)
 
     gr.Interface(fn=submint_disease, inputs="text_area", outputs=diagnosis)
