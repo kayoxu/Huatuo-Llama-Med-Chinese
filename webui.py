@@ -25,10 +25,9 @@ def load_model():
     prompt_template = 'med_template'
     global prompter, tokenizer, model
 
-    print('模型加载中')
-
     try:
         if '' == os.environ['modelInit']:
+            print('模型加载中')
             prompter = Prompter(prompt_template)
             tokenizer = LlamaTokenizer.from_pretrained(base_model)
             model = LlamaForCausalLM.from_pretrained(
@@ -55,7 +54,7 @@ def load_model():
 
             if torch.__version__ >= "2" and sys.platform != "win32":
                 model = torch.compile(model)
-        print('模型加载成功')
+            print('模型加载成功')
         os.environ['modelInit'] = 'ok'
         return '模型加载成功'
     except:
